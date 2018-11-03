@@ -21,13 +21,13 @@ This Kernel aims to mine Kaggle Survey 2018 Dataset with a Girl Power lens where
 
 ### Libraries
 
-```{r}
+```{r, message = FALSE, warning=FALSE}
 library(tidyverse)
 library(highcharter)
 ```
 
 
-```{r}
+```{r, message = FALSE, warning=FALSE}
 survey <- read_csv("input/multipleChoiceResponses.csv", skip = 1)
 ```
 
