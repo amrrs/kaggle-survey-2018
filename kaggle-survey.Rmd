@@ -1,0 +1,108 @@
+---
+title: "Kaggle Survey 2018 - The Girl Power"
+output:
+  html_document:
+    number_sections: false
+    fig_caption: true
+    toc: true
+    fig_width: 8
+    fig_height: 6
+    theme: united
+    highlight: zenburn
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This Kernel aims to mine Kaggle Survey 2018 Dataset with a Girl Power lens where Female respondents are the primary focus, hoping the insights from it could help drive Female inclusion in the community. 
+
+
+### Libraries
+
+```{r}
+library(tidyverse)
+library(highcharter)
+```
+
+
+```{r}
+survey <- read_csv("input/multipleChoiceResponses.csv", skip = 1)
+```
+
+### Filtering  entries marked by respondents mentioning Gender as Female 
+
+```{r}
+female <- survey %>% filter(`What is your gender? - Selected Choice` %in% "Female")
+```
+
+
+### What's the age range of Female respondents?
+
+```{r}
+female %>% count(`What is your age (# years)?`) %>% 
+  rename( "Age" = `What is your age (# years)?` ) %>% 
+  hchart("column",hcaes("Age","n")) %>% 
+  hc_title(text = "Female - Age ") %>% 
+hc_add_theme(hc_theme_darkunica()) 
+  
+```
+
+
+
+### Country where are you from?
+
+```{r}
+female %>% count(`In which country do you currently reside?`) %>%
+  rename( "Country" = `In which country do you currently reside?` ) %>% 
+  hchart("column",hcaes("Country","n")) %>% 
+  hc_title(text = "Female - Country of Residence ") %>% 
+  hc_add_theme(hc_theme_darkunica()) 
+  
+```
+
+### Annual Salary
+
+
+```{r}
+
+female %>% count(`What is your current yearly compensation (approximate $USD)?`) %>%
+  rename( "Salary" = `What is your current yearly compensation (approximate $USD)?` ) %>% 
+  hchart("column",hcaes("Salary","n")) %>% 
+  hc_title(text = "Female - Current Salary ") %>% 
+  hc_add_theme(hc_theme_darkunica()) 
+  
+```
+
+
+```{r}
+female %>% count(`In which country do you currently reside?`) %>%
+  rename( "Country" = `In which country do you currently reside?` ) %>% 
+  hchart("column",hcaes("Country","n")) %>% 
+  hc_title(text = "Female - Country of Residence ") %>% 
+  hc_add_theme(hc_theme_darkunica()) 
+```
+
+
+
+
+### Programming Language Choice
+
+```{r}
+
+female %>% count(`What specific programming language do you use most often? - Selected Choice`) %>%
+  rename( "Language" = `What specific programming language do you use most often? - Selected Choice`) %>% 
+  hchart("column",hcaes("Language","n")) %>% 
+  hc_title(text = "Female - Programming Language used most often") %>% 
+  hc_add_theme(hc_theme_darkunica()) 
+  
+
+```
+
+
+
+
+### WIP
+
+This quick Kernel without any proper nararation is to tell myself that "Hey you've started something, Go do it!". I'll update this Kernel regularly. Please share your suggestions to improve or what insights to see!
