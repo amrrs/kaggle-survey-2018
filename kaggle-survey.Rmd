@@ -16,29 +16,44 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+### What have we got here?
+
+The dataset we have got here is a survey dataset that's filled by members of Kaggle Community. This dataset has very well captured many information about the mindset of Kagglers. 
+
+
+### What can we do with it?
+
+
 This Kernel aims to mine Kaggle Survey 2018 Dataset with a Girl Power lens where Female respondents are the primary focus, hoping the insights from it could help drive Female inclusion in the community. 
 
 
 ### Libraries
 
 ```{r, message = FALSE, warning=FALSE}
-library(tidyverse)
-library(highcharter)
+suppressPackageStartupMessages(library(tidyverse)) 
+suppressPackageStartupMessages(library(highcharter))
 ```
 
 
 ```{r, message = FALSE, warning=FALSE}
-survey <- read_csv("input/multipleChoiceResponses.csv", skip = 1)
+survey <- read_csv("input/multipleChoiceResponses.csv", skip = 1, col_types = cols())
 ```
 
 ### Filtering  entries marked by respondents mentioning Gender as Female 
 
+While there could be many different entries made under Gender, we will consider only `Female` and `Male` (for comparison) in our further Analysis. 
+
 ```{r}
 female <- survey %>% filter(`What is your gender? - Selected Choice` %in% "Female")
+
+male <- survey %>% filter(`What is your gender? - Selected Choice` %in% "Male")
 ```
 
 
 ### What's the age range of Female respondents?
+
+Let us begin with a simple understanding of the age range of the Female respondents. 
 
 ```{r}
 female %>% count(`What is your age (# years)?`) %>% 
@@ -50,8 +65,18 @@ hc_add_theme(hc_theme_darkunica())
 ```
 
 
+```{r}
+male %>% count(`What is your age (# years)?`) %>% 
+  rename( "Age" = `What is your age (# years)?` ) %>% 
+  hchart("column",hcaes("Age","n")) %>% 
+  hc_title(text = "Male - Age ") %>% 
+hc_add_theme(hc_theme_darkunica()) 
+  
+```
 
 ### Country where are you from?
+
+The place where we come from plays a vital role in becoming what we are. The next obvious thing to look into the details of our Female Kagglers is their Place of Residence. 
 
 ```{r}
 female %>% count(`In which country do you currently reside?`) %>%
@@ -61,6 +86,18 @@ female %>% count(`In which country do you currently reside?`) %>%
   hc_add_theme(hc_theme_darkunica()) 
   
 ```
+
+Their Male counterparts! 
+
+```{r}
+male %>% count(`In which country do you currently reside?`) %>%
+  rename( "Country" = `In which country do you currently reside?` ) %>% 
+  hchart("column",hcaes("Country","n")) %>% 
+  hc_title(text = "male - Country of Residence ") %>% 
+  hc_add_theme(hc_theme_darkunica()) 
+  
+```
+
 
 ### Annual Salary
 
@@ -77,10 +114,10 @@ female %>% count(`What is your current yearly compensation (approximate $USD)?`)
 
 
 ```{r}
-female %>% count(`In which country do you currently reside?`) %>%
+male %>% count(`In which country do you currently reside?`) %>%
   rename( "Country" = `In which country do you currently reside?` ) %>% 
   hchart("column",hcaes("Country","n")) %>% 
-  hc_title(text = "Female - Country of Residence ") %>% 
+  hc_title(text = "male - Country of Residence ") %>% 
   hc_add_theme(hc_theme_darkunica()) 
 ```
 
@@ -95,8 +132,17 @@ female %>% count(`What specific programming language do you use most often? - Se
   rename( "Language" = `What specific programming language do you use most often? - Selected Choice`) %>% 
   hchart("column",hcaes("Language","n")) %>% 
   hc_title(text = "Female - Programming Language used most often") %>% 
+  hc_add_theme(hc_theme_darkunica())
+
+```
+
+```{r}
+
+male %>% count(`What specific programming language do you use most often? - Selected Choice`) %>%
+  rename( "Language" = `What specific programming language do you use most often? - Selected Choice`) %>% 
+  hchart("column",hcaes("Language","n")) %>% 
+  hc_title(text = "Male - Programming Language used most often") %>% 
   hc_add_theme(hc_theme_darkunica()) 
-  
 
 ```
 
