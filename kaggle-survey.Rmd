@@ -87,9 +87,9 @@ mf %>% group_by(Gender) %>% count(`In which country do you currently reside?`) %
    
   
   hchart("column",hcaes(x = "Country", y = "n", group = "Gender")) %>% 
-  hc_title(text = "Female vs Male - Age Distribution %") %>% 
+  hc_title(text = "Female vs Male - Country Distribution %") %>% 
 hc_add_theme(hc_theme_darkunica()) %>% 
-    hc_xAxis(title = list(text = "Gender")) %>% 
+    hc_xAxis(title = list(text = "Country")) %>% 
     hc_yAxis(title = list(text = "Percentage of Respondents"),labels = list(format = "{value}%"))
 
   
@@ -111,20 +111,12 @@ mf %>% group_by(Gender) %>% count(`What is your current yearly compensation (app
   hchart("column",hcaes(x = "Salary", y = "n", group = "Gender")) %>% 
   hc_title(text = "Female vs Male - Salary Distribution %") %>% 
   hc_add_theme(hc_theme_darkunica()) %>% 
-    hc_xAxis(title = list(text = "Gender")) %>% 
+    hc_xAxis(title = list(text = "Salary Range")) %>% 
     hc_yAxis(title = list(text = "Percentage of Respondents"),labels = list(format = "{value}%"))
 
  
 ```
-
-
-```{r}
-male %>% count(`In which country do you currently reside?`) %>%
-  rename( "Country" = `In which country do you currently reside?` ) %>% 
-  hchart("column",hcaes("Country","n")) %>% 
-  hc_title(text = "male - Country of Residence ") %>% 
-  hc_add_theme(hc_theme_darkunica()) 
-```
+ 
 
 
 
@@ -133,23 +125,22 @@ male %>% count(`In which country do you currently reside?`) %>%
 
 ```{r}
 
-female %>% count(`What specific programming language do you use most often? - Selected Choice`) %>%
+
+
+
+mf %>% group_by(Gender) %>% count(`What specific programming language do you use most often? - Selected Choice`) %>%
+  mutate(n = round((n/ sum(n)) * 100, 3)) %>%
+
   rename( "Language" = `What specific programming language do you use most often? - Selected Choice`) %>% 
-  hchart("column",hcaes("Language","n")) %>% 
-  hc_title(text = "Female - Programming Language used most often") %>% 
-  hc_add_theme(hc_theme_darkunica())
+  hchart("column",hcaes(x = "Language", y = "n", group = "Gender")) %>% 
+  hc_title(text = "Female vs Male - Language Choice Distribution %") %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+    hc_xAxis(title = list(text = "Language")) %>% 
+    hc_yAxis(title = list(text = "Percentage of Respondents"),labels = list(format = "{value}%"))
+
 
 ```
 
-```{r}
-
-male %>% count(`What specific programming language do you use most often? - Selected Choice`) %>%
-  rename( "Language" = `What specific programming language do you use most often? - Selected Choice`) %>% 
-  hchart("column",hcaes("Language","n")) %>% 
-  hc_title(text = "Male - Programming Language used most often") %>% 
-  hc_add_theme(hc_theme_darkunica()) 
-
-```
 
 
 
