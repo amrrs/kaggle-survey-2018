@@ -45,9 +45,14 @@ survey <- read_csv("input/multipleChoiceResponses.csv", skip = 1, col_types = co
 While there could be many different entries made under Gender, we will consider only `Female` and `Male` (for comparison) in our further Analysis. 
 
 ```{r}
-female <- survey %>% filter(`What is your gender? - Selected Choice` %in% "Female")
+female <- survey %>% filter(`What is your gender? - Selected Choice` %in% "Female") %>% 
+  rename("Gender" = `What is your gender? - Selected Choice`)
 
-male <- survey %>% filter(`What is your gender? - Selected Choice` %in% "Male")
+male <- survey %>% filter(`What is your gender? - Selected Choice` %in% "Male") %>% 
+  rename("Gender" = `What is your gender? - Selected Choice`)
+
+
+mf <- rbind(female,male)
 ```
 
 
@@ -56,47 +61,40 @@ male <- survey %>% filter(`What is your gender? - Selected Choice` %in% "Male")
 Let us begin with a simple understanding of the age range of the Female respondents. 
 
 ```{r}
-female %>% count(`What is your age (# years)?`) %>% 
-  rename( "Age" = `What is your age (# years)?` ) %>% 
-  hchart("column",hcaes("Age","n")) %>% 
-  hc_title(text = "Female - Age ") %>% 
-hc_add_theme(hc_theme_darkunica()) 
+mf %>% group_by(Gender) %>% count(`What is your age (# years)?`) %>% 
+   mutate(n = round((n/ sum(n)) * 100)) %>% 
+  rename( "Age" = `What is your age (# years)?`) %>% 
+  hchart("column",hcaes(x = "Age", y = "n", group = "Gender")) %>% 
+  hc_title(text = "Female vs Male - Age Distribution %") %>% 
+hc_add_theme(hc_theme_darkunica()) %>% 
+    hc_xAxis(title = list(text = "Gender")) %>% 
+    hc_yAxis(title = list(text = "Percentage of Respondents"),labels = list(format = "{value}%"))
+
   
 ```
 
 
-```{r}
-male %>% count(`What is your age (# years)?`) %>% 
-  rename( "Age" = `What is your age (# years)?` ) %>% 
-  hchart("column",hcaes("Age","n")) %>% 
-  hc_title(text = "Male - Age ") %>% 
-hc_add_theme(hc_theme_darkunica()) 
-  
-```
 
 ### Country where are you from?
 
 The place where we come from plays a vital role in becoming what we are. The next obvious thing to look into the details of our Female Kagglers is their Place of Residence. 
 
 ```{r}
-female %>% count(`In which country do you currently reside?`) %>%
+mf %>% group_by(Gender) %>% count(`In which country do you currently reside?`) %>%
+  
+  mutate(n = round((n/ sum(n)) * 100)) %>% 
   rename( "Country" = `In which country do you currently reside?` ) %>% 
-  hchart("column",hcaes("Country","n")) %>% 
-  hc_title(text = "Female - Country of Residence ") %>% 
-  hc_add_theme(hc_theme_darkunica()) 
+   
+  
+  hchart("column",hcaes(x = "Country", y = "n", group = "Gender")) %>% 
+  hc_title(text = "Female vs Male - Age Distribution %") %>% 
+hc_add_theme(hc_theme_darkunica()) %>% 
+    hc_xAxis(title = list(text = "Gender")) %>% 
+    hc_yAxis(title = list(text = "Percentage of Respondents"),labels = list(format = "{value}%"))
+
   
 ```
-
-Their Male counterparts! 
-
-```{r}
-male %>% count(`In which country do you currently reside?`) %>%
-  rename( "Country" = `In which country do you currently reside?` ) %>% 
-  hchart("column",hcaes("Country","n")) %>% 
-  hc_title(text = "male - Country of Residence ") %>% 
-  hc_add_theme(hc_theme_darkunica()) 
-  
-```
+ 
 
 
 ### Annual Salary
@@ -104,12 +102,19 @@ male %>% count(`In which country do you currently reside?`) %>%
 
 ```{r}
 
-female %>% count(`What is your current yearly compensation (approximate $USD)?`) %>%
+
+mf %>% group_by(Gender) %>% count(`What is your current yearly compensation (approximate $USD)?`) %>%
   rename( "Salary" = `What is your current yearly compensation (approximate $USD)?` ) %>% 
-  hchart("column",hcaes("Salary","n")) %>% 
-  hc_title(text = "Female - Current Salary ") %>% 
-  hc_add_theme(hc_theme_darkunica()) 
+  filter(! Salary %in% 18) %>% 
+  mutate(n = round((n/ sum(n)) * 100, 3)) %>% 
   
+  hchart("column",hcaes(x = "Salary", y = "n", group = "Gender")) %>% 
+  hc_title(text = "Female vs Male - Salary Distribution %") %>% 
+  hc_add_theme(hc_theme_darkunica()) %>% 
+    hc_xAxis(title = list(text = "Gender")) %>% 
+    hc_yAxis(title = list(text = "Percentage of Respondents"),labels = list(format = "{value}%"))
+
+ 
 ```
 
 
