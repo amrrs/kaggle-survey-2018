@@ -12,9 +12,7 @@ output:
     code_folding: hide
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 
 ### Do Computers Lie?
@@ -47,7 +45,8 @@ The first step of finding solution to any problem is accepting **The Problem exi
 
 ### Libraries
 
-```{r, message = FALSE, warning=FALSE}
+
+```r
 suppressPackageStartupMessages(library(tidyverse)) 
 suppressPackageStartupMessages(library(highcharter))
 suppressPackageStartupMessages(library(DataExplorer))
@@ -68,37 +67,25 @@ NADF %>%
     labs(x="", y="Percent missing") +
     geom_text(aes(label=paste0(NADF$PctMissing, "%"), hjust=-0.1))
 }
-
-
-
-
 ```
 
 
-```{r, message = FALSE, warning=FALSE}
-survey <- read_csv("input/multipleChoiceResponses.csv", skip = 1, col_types = cols())
 
+```r
+survey <- read_csv("input/multipleChoiceResponses.csv", skip = 1, col_types = cols())
 ```
 
 ### Ignorance is Bliss - but not always! 
   
 
-```{r echo=FALSE, fig.show = 'hide'}
 
-survey %>%  select(contains("How do you perceive the importance of the following topics?"),
-                   contains("Does your current employer incorporate machine learning methods into their business?"),
-                   starts_with("In which country"),
-                   contains("compensation")
-) %>% 
-#plot_missing() -> p1 
-  plotting_missing() -> p1
 
-```
 
-```{r}
+```r
 p1  + theme_minimal() + theme(axis.text = element_text(size = 6)) + labs(title = "Ignorance beyond DS") 
-
 ```
+
+<img src="IML_files/figure-html/unnamed-chunk-4-1.png" width="864" />
 
 
 
@@ -110,7 +97,8 @@ While asking about **Salary made 15% of respondents** to not answer, Questions a
 ### Reproducibility, Explainability and Bias
 
 
-```{r warning = FALSE}
+
+```r
 survey %>% select(contains("How do you perceive the importance of the following topics?")) %>% 
   gather() %>% 
   mutate(key = str_replace(key,"-","\n")) %>% 
@@ -134,6 +122,8 @@ survey %>% select(contains("How do you perceive the importance of the following 
        y = "Percentage of Respondents (other than NAs)")
 ```
 
+<img src="IML_files/figure-html/unnamed-chunk-5-1.png" width="864" />
+
 
 **Fairness and Bias:**
 
@@ -146,7 +136,8 @@ survey %>% select(contains("How do you perceive the importance of the following 
 
 
  
-```{r}
+
+```r
 survey %>% select(contains("How do you perceive the importance of the following topics?")) %>% 
   gather() %>% 
   mutate(key = str_replace(key,"How do you perceive the importance of the following topics?",""),
@@ -159,24 +150,32 @@ survey %>% select(contains("How do you perceive the importance of the following 
   knitr::kable()
 ```
 
+
+
+key                                                         No opinion; I do not know   Not at all important   Slightly important   Very important   <NA>  
+----------------------------------------------------------  --------------------------  ---------------------  -------------------  ---------------  ------
+Being able to explain ML model outputs and/or predictions   2.9%                        1.6%                   17.0%                41.1%            37.4% 
+Fairness and bias in ML algorithms:                         5.4%                        2.3%                   19.0%                36.0%            37.4% 
+Reproducibility in data science                             3.8%                        1.0%                   14.9%                42.9%            37.4% 
+
 ## Who are they?
 
 *They* refer to those beings who think Fairness and Bias are **Very Important** in Machine Learning. 
 
 
-```{r}
+
+```r
 they <- survey %>% filter(`How do you perceive the importance of the following topics? - Fairness and bias in ML algorithms:` == "Very important")
 
 
 not_they <- survey %>% filter(`How do you perceive the importance of the following topics? - Fairness and bias in ML algorithms:` != "Very important")
-
 ```
 
 
 ### Gender 
 
-```{r}
 
+```r
 they %>% group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungroup() %>% 
   rename("Gender" = `What is your gender? - Selected Choice`) %>% 
   mutate(n = n / sum(n),
@@ -192,9 +191,13 @@ they %>% group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungr
        subtitle = "Perception on Fairness and Model Bias ",
        x = "Gender",
        y = "Percentage of Respondents (other than NAs)") -> p1
+```
 
+```
+## Warning: Ignoring unknown parameters: stat
+```
 
-
+```r
 not_they %>% group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungroup() %>% 
   rename("Gender" = `What is your gender? - Selected Choice`) %>% 
   mutate(n = n / sum(n),
@@ -210,13 +213,17 @@ not_they %>% group_by(`What is your gender? - Selected Choice`) %>% count() %>% 
        subtitle = "Perception on Fairness and Model Bias ",
        x = "Gender",
        y = "Percentage of Respondents (other than NAs)") -> p2
-
-
-cowplot::plot_grid(p1,p2)
-
-
+```
 
 ```
+## Warning: Ignoring unknown parameters: stat
+```
+
+```r
+cowplot::plot_grid(p1,p2)
+```
+
+<img src="IML_files/figure-html/unnamed-chunk-8-1.png" width="864" />
 
 
 * There is a difference of **5.1 PP** Female Percentage difference between those who perceive **Model Fariness & Bias in ML** is **Very Important** and Others.
@@ -227,8 +234,8 @@ cowplot::plot_grid(p1,p2)
 
 ### Age 
 
-```{r}
 
+```r
 they %>% group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %>% 
   rename("Age" = `What is your age (# years)?`) %>% 
   mutate(n = n / sum(n),
@@ -244,9 +251,13 @@ they %>% group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %>%
        subtitle = "Perception on Fairness and Model Bias ",
        x = "Age",
        y = "Percentage of Respondents (other than NAs)") -> p1
+```
 
+```
+## Warning: Ignoring unknown parameters: stat
+```
 
-
+```r
 not_they %>% group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %>% 
   rename("Age" = `What is your age (# years)?`) %>% 
   mutate(n = n / sum(n),
@@ -262,13 +273,17 @@ not_they %>% group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %
        subtitle = "Perception on Fairness and Model Bias ",
        x = "Age",
        y = "Percentage of Respondents (other than NAs)") -> p2
-
-
-cowplot::plot_grid(p1,p2)
-
-
+```
 
 ```
+## Warning: Ignoring unknown parameters: stat
+```
+
+```r
+cowplot::plot_grid(p1,p2)
+```
+
+<img src="IML_files/figure-html/unnamed-chunk-9-1.png" width="864" />
 
 ### WIP 
 
