@@ -5,7 +5,7 @@ output:
     number_sections: false
     fig_caption: true
     toc: true
-    fig_width: 8
+    fig_width: 9
     fig_height: 6
     theme: united
     highlight: zenburn
@@ -53,6 +53,24 @@ suppressPackageStartupMessages(library(highcharter))
 suppressPackageStartupMessages(library(DataExplorer))
 suppressPackageStartupMessages(library(scales))
 
+plotting_missing <- function(df){
+
+  #based on erikbruin's code snippet
+    
+NAcol <- which(colSums(is.na(df)) > 0)
+NAcount <- sort(colSums(sapply(df[NAcol], is.na)), decreasing = TRUE)
+NADF <- data.frame(variable=names(NAcount), missing=NAcount)
+NADF$PctMissing <- round(((NADF$missing/nrow(df))*100),1)
+NADF %>%
+    ggplot(aes(x=reorder(variable, PctMissing), y=PctMissing)) +
+    geom_bar(stat='identity', fill='red') + coord_flip(y=c(0,110)) +
+    labs(x="", y="Percent missing") +
+    geom_text(aes(label=paste0(NADF$PctMissing, "%"), hjust=-0.1))
+}
+
+
+
+
 ```
 
 
@@ -71,7 +89,8 @@ survey %>%  select(contains("How do you perceive the importance of the following
                    starts_with("In which country"),
                    contains("compensation")
 ) %>% 
-plot_missing() -> p1 
+#plot_missing() -> p1 
+  plotting_missing() -> p1
 
 ```
 
