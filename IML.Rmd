@@ -378,6 +378,66 @@ cowplot::plot_grid(p1,p2)
 * As with the previouus insight, once again it comes that Students need to be educated with the concepts of Model Bias and Fairness since there is **~4 PP** difference between Students in They vs Not They. 
 
 
-### WIP 
+### Undergraduate Majors
 
-Please share your appreciation through upvote, More importantly comments to improve this Kernel!
+
+```{r}
+
+
+
+
+
+they %>% 
+  mutate(UG = ifelse(`Which best describes your undergraduate major? - Selected Choice` %in% c("Computer science (software engineering, etc.)","Information technology, networking, or system administration"),
+                          "CS",
+                          "Non_CS")) %>% 
+  group_by(UG) %>% count() %>% ungroup() %>% 
+  rename("UG" = UG) %>% 
+  mutate(n = n / sum(n),
+         perc = percent(n)) %>% 
+   ggplot() + geom_col(aes(UG,n, fill = UG), stat = "identity", show.legend = FALSE) +
+   geom_label(aes(x = UG, y = n - 0.05, label = percent(n)),
+           # hjust=0, vjust=0, size = 4, colour = 'black',
+            fontface = 'bold') +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() + 
+  theme(axis.text = element_text(angle = 45, size = 6)) +
+  labs(title = "They",
+       subtitle = "Perception on Fairness and Model Bias ",
+       x = "Title",
+       y = "Percentage of Respondents (other than NAs)") -> p1
+
+
+not_they %>% 
+   mutate(UG = ifelse(`Which best describes your undergraduate major? - Selected Choice` %in% c("Computer science (software engineering, etc.)","Information technology, networking, or system administration"),
+                          "CS",
+                          "Non_CS")) %>% 
+  group_by(UG) %>% count() %>% ungroup() %>% 
+  rename("UG" = UG) %>% 
+  mutate(n = n / sum(n),
+         perc = percent(n)) %>% 
+   ggplot() + geom_col(aes(UG,n, fill = UG), stat = "identity", show.legend = FALSE) +
+   geom_label(aes(x = UG, y = n - 0.05, label = percent(n)),
+           # hjust=0, vjust=0, size = 4, colour = 'black',
+            fontface = 'bold') +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() + 
+  theme(axis.text = element_text(angle = 45, size = 6)) +
+  labs(title = "Not They",
+       subtitle = "Perception on Fairness and Model Bias ",
+       x = "Title",
+       y = "Percentage of Respondents (other than NAs)") -> p2
+
+
+cowplot::plot_grid(p1,p2)
+
+```
+
+* Comptuer Science / IT Engineers have a difference of **~ 3.4PP** between **They and Not They**, which shows that's needs more care in the mindset change than Non-CS (even though that's also required) but at least this can help prioritise where to start with any campaigning
+
+
+### Recommendations 
+
+* Exposing College Students and Early in Career Data Scientsits to Model Fairness and Bias Machine Learning 
+* Educating specially Male (and also female) Data scientsts the importance of unBiasing input training data / Model before moving it to production / presentation
+* Suggesting places like Kaggle and Bootcamps to include Projects/Works about Model Fariness and Bias in their Data Science Curriculum
