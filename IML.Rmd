@@ -270,6 +270,114 @@ cowplot::plot_grid(p1,p2)
 
 ```
 
+Age doesn't seem to give anything straightway, which probably could be due to a lot of different age brackets. Let us try a bit of engineering to club them into two groups < 30 and > 30. 
+
+
+```{r}
+
+they %>% 
+  mutate(age_grp = ifelse(parse_number(`What is your age (# years)?`) < 30,
+                          "Less than 30",
+                          "30+")) %>% 
+  group_by(age_grp) %>% count() %>% ungroup() %>% 
+  rename("Age" = age_grp) %>% 
+  mutate(n = n / sum(n),
+         perc = percent(n)) %>% 
+   ggplot() + geom_col(aes(Age,n, fill = Age), stat = "identity", show.legend = FALSE) +
+   geom_label(aes(x = Age, y = n - 0.05, label = percent(n)),
+           # hjust=0, vjust=0, size = 4, colour = 'black',
+            fontface = 'bold') +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() + 
+  theme(axis.text = element_text(angle = 45, size = 6)) +
+  labs(title = "They",
+       subtitle = "Perception on Fairness and Model Bias ",
+       x = "Age",
+       y = "Percentage of Respondents (other than NAs)") -> p1
+
+
+
+not_they %>% 
+   mutate(age_grp = ifelse(parse_number(`What is your age (# years)?`) < 30,
+                          "Less than 30",
+                          "30+")) %>% 
+  group_by(age_grp) %>% count() %>% ungroup() %>% 
+  rename("Age" = age_grp) %>% 
+  mutate(n = n / sum(n),
+         perc = percent(n)) %>% 
+    ggplot() + geom_col(aes(Age,n, fill = Age), stat = "identity", show.legend = FALSE) +
+   geom_label(aes(x = Age, y = n - 0.05, label = percent(n)),
+           # hjust=0, vjust=0, size = 4, colour = 'black',
+            fontface = 'bold') +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() + 
+  theme(axis.text = element_text(angle = 45, size = 6)) +
+  labs(title = "Not They",
+       subtitle = "Perception on Fairness and Model Bias ",
+       x = "Age",
+       y = "Percentage of Respondents (other than NAs)") -> p2
+
+
+cowplot::plot_grid(p1,p2)
+
+```
+
+This plot helps us say that **the younger ones need to be updated with the implications of Model Bias and Fairness** more than their older counterparts. That leads us to another important section of what they do.
+
+### Student vs Professionals
+
+
+```{r}
+
+they %>% 
+  mutate(title = ifelse(`Select the title most similar to your current role (or most recent title if retired): - Selected Choice` == "Student",
+                          "Student",
+                          "Professional")) %>% 
+  group_by(title) %>% count() %>% ungroup() %>% 
+  rename("Title" = title) %>% 
+  mutate(n = n / sum(n),
+         perc = percent(n)) %>% 
+   ggplot() + geom_col(aes(Title,n, fill = Title), stat = "identity", show.legend = FALSE) +
+   geom_label(aes(x = Title, y = n - 0.05, label = percent(n)),
+           # hjust=0, vjust=0, size = 4, colour = 'black',
+            fontface = 'bold') +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() + 
+  theme(axis.text = element_text(angle = 45, size = 6)) +
+  labs(title = "They",
+       subtitle = "Perception on Fairness and Model Bias ",
+       x = "Title",
+       y = "Percentage of Respondents (other than NAs)") -> p1
+
+
+not_they %>% 
+  mutate(title = ifelse(`Select the title most similar to your current role (or most recent title if retired): - Selected Choice` == "Student",
+                          "Student",
+                          "Professional")) %>% 
+  group_by(title) %>% count() %>% ungroup() %>% 
+  rename("Title" = title) %>% 
+  mutate(n = n / sum(n),
+         perc = percent(n)) %>% 
+    ggplot() + geom_col(aes(Title,n, fill = Title), stat = "identity", show.legend = FALSE) +
+   geom_label(aes(x = Title, y = n - 0.05, label = percent(n)),
+           # hjust=0, vjust=0, size = 4, colour = 'black',
+            fontface = 'bold') +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() + 
+  theme(axis.text = element_text(angle = 45, size = 6)) +
+  labs(title = "Not They",
+       subtitle = "Perception on Fairness and Model Bias ",
+       x = "Title",
+       y = "Percentage of Respondents (other than NAs)") -> p2
+
+
+cowplot::plot_grid(p1,p2)
+
+```
+
+* As with the previouus insight, once again it comes that Students need to be educated with the concepts of Model Bias and Fairness since there is **~4 PP** difference between Students in They vs Not They. 
+
+
 ### WIP 
 
 Please share your appreciation through upvote, More importantly comments to improve this Kernel!
