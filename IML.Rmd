@@ -499,7 +499,7 @@ cowplot::plot_grid(p1,p2)
 
 * R users tend to be perceive Model Bias and Fairness as **Very Important** than their Python Counterparts.
 
-### Recommendations 
+## Recommendations 
 
 * Exposing College Students and Early in Career Data Scientsits to Model Fairness and Bias Machine Learning 
 * Educating specially Male (and also female) Data scientsts the importance of unBiasing input training data / Model before moving it to production / presentation
