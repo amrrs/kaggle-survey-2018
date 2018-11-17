@@ -53,6 +53,7 @@ suppressPackageStartupMessages(library(highcharter))
 suppressPackageStartupMessages(library(DataExplorer))
 suppressPackageStartupMessages(library(scales))
 suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(viridis))
 
 plotting_missing <- function(df){
 
@@ -119,10 +120,11 @@ survey %>% select(contains("How do you perceive the importance of the following 
   count(value) %>% 
   drop_na() %>% 
   mutate(n = n / sum(n)) %>% 
-  ggplot() + geom_col(aes(value,n, fill = key, ), stat = "identity", show.legend = FALSE) +
+  ggplot() + geom_col(aes(value,n, fill = key), stat = "identity", show.legend = FALSE) +
    geom_label(aes(x = value, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+  scale_fill_viridis(discrete = T, option = "E") +
   facet_wrap(~key) +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
@@ -183,6 +185,8 @@ they %>% group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungr
    geom_label(aes(x = Gender, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "E") +
+
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -201,6 +205,8 @@ not_they %>% group_by(`What is your gender? - Selected Choice`) %>% count() %>% 
    geom_label(aes(x = Gender, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "E") +
+
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -235,6 +241,7 @@ they %>% group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %>%
    geom_label(aes(x = Age, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "D") +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -253,6 +260,7 @@ not_they %>% group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %
    geom_label(aes(x = Age, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "D") +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -285,6 +293,7 @@ they %>%
    geom_label(aes(x = Age, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "E") +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -307,6 +316,7 @@ not_they %>%
    geom_label(aes(x = Age, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "E") +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -339,6 +349,7 @@ they %>%
    geom_label(aes(x = Title, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "C") +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -360,6 +371,7 @@ not_they %>%
    geom_label(aes(x = Title, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+  scale_fill_viridis(discrete = T, option = "C") +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -397,6 +409,7 @@ they %>%
    geom_label(aes(x = UG, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+  scale_fill_viridis(discrete = T, option = "D") +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -418,6 +431,7 @@ not_they %>%
    geom_label(aes(x = UG, y = n - 0.05, label = percent(n)),
            # hjust=0, vjust=0, size = 4, colour = 'black',
             fontface = 'bold') +
+  scale_fill_viridis(discrete = T, option = "D") +
   scale_y_continuous(labels = percent_format()) +
   theme_minimal() + 
   theme(axis.text = element_text(angle = 45, size = 6)) +
@@ -433,6 +447,57 @@ cowplot::plot_grid(p1,p2)
 
 * Comptuer Science / IT Engineers have a difference of **~ 3.4PP** between **They and Not They**, which shows that's needs more care in the mindset change than Non-CS (even though that's also required) but at least this can help prioritise where to start with any campaigning
 
+
+### R vs Python 
+
+```{r warning=FALSE}
+
+they %>% filter(`What specific programming language do you use most often? - Selected Choice` %in% c("R","Python")) %>% 
+  group_by(`What specific programming language do you use most often? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Language" = `What specific programming language do you use most often? - Selected Choice`) %>% 
+  mutate(n = n / sum(n),
+         perc = percent(n)) %>% 
+   ggplot() + geom_col(aes(Language,n, fill = Language), stat = "identity", show.legend = FALSE) +
+   geom_label(aes(x = Language, y = n - 0.05, label = percent(n)),
+           # hjust=0, vjust=0, size = 4, colour = 'black',
+            fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "D") +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() + 
+  theme(axis.text = element_text(angle = 45, size = 6)) +
+  labs(title = "They",
+       subtitle = "Perception on Fairness and Model Bias ",
+       x = "Language",
+       y = "Percentage of Respondents (other than NAs)") -> p1
+
+
+
+not_they   %>% filter(`What specific programming language do you use most often? - Selected Choice` %in% c("R","Python")) %>% 
+  group_by(`What specific programming language do you use most often? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Language" = `What specific programming language do you use most often? - Selected Choice`) %>% 
+  mutate(n = n / sum(n),
+         perc = percent(n)) %>% 
+   ggplot() + geom_col(aes(Language,n, fill = Language), stat = "identity", show.legend = FALSE) +
+   geom_label(aes(x = Language, y = n - 0.05, label = percent(n)),
+           # hjust=0, vjust=0, size = 4, colour = 'black',
+            fontface = 'bold') +
+    scale_fill_viridis(discrete = T, option = "D") +
+  scale_y_continuous(labels = percent_format()) +
+  theme_minimal() + 
+  theme(axis.text = element_text(angle = 45, size = 6)) +
+  labs(title = "They",
+       subtitle = "Perception on Fairness and Model Bias ",
+       x = "Language",
+       y = "Percentage of Respondents (other than NAs)") -> p2
+
+
+cowplot::plot_grid(p1,p2)
+
+
+
+```
+
+* R users tend to be perceive Model Bias and Fairness as **Very Important** than their Python Counterparts.
 
 ### Recommendations 
 
