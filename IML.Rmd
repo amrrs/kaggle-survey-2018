@@ -76,7 +76,6 @@ NADF %>%
 
 ```{r, message = FALSE, warning=FALSE}
 survey <- read_csv("input/multipleChoiceResponses.csv", skip = 1, col_types = cols())
-
 ```
 
 ### Ignorance is Bliss - but not always! 
