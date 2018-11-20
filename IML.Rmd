@@ -499,27 +499,10 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
   hc_title(text = "Language ordered by They-NotThey Ratio") %>% 
   hc_add_theme(hc_theme_538()) 
   
-  
 
 ```
 
 
-```{r}
-
-they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
-  group_by(`What specific programming language do you use most often? - Selected Choice`) %>% count() %>% ungroup() %>% 
-  rename("Lang" = `What specific programming language do you use most often? - Selected Choice`,
-         "They" = n) %>%  
-  bind_cols(
-not_they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
-  group_by(`What specific programming language do you use most often? - Selected Choice`) %>% count() %>% ungroup() %>% 
-  rename("Lang1" = `What specific programming language do you use most often? - Selected Choice`,
-         "Not They" = n) %>% 
-  select(-Lang1)) %>% 
-  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
-  arrange(desc(T_NT_Ratio)) %>% 
-  DT::datatable()
-```
 
 
 * R users tend to be perceive Model Bias and Fairness as **Very Important** than their Python Counterparts.
@@ -576,24 +559,6 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 
 ```
 
-
-```{r warning=FALSE}
-
-they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
-  group_by(`In which country do you currently reside?`) %>% count() %>% ungroup() %>% 
-  rename("Country" = `In which country do you currently reside?`,
-         "They" = n) %>%  
-  bind_cols(
-not_they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
-  group_by(`In which country do you currently reside?`) %>% count() %>% ungroup() %>% 
-  rename("Country1" = `In which country do you currently reside?`,
-         "Not They" = n) %>% 
-  select(-Country1)) %>% 
-  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
-  arrange(desc(T_NT_Ratio)) %>% 
-  DT::datatable()
-
-```
 * **Chile** leads the pack if all the countries are considered otherwise if only the countries with more than 100 respondents are selected, **South Africa** followed by **Nigeria** are leading the pack of a healthy They to Not They ratio.
 
 ## Recommendations 
