@@ -93,7 +93,8 @@ survey %>%  select(contains("How do you perceive the importance of the following
 
 ```
 
-```{r}
+```{r warning=FALSE}
+
 p1  + theme_minimal() + theme(axis.text = element_text(size = 6)) + labs(title = "Ignorance beyond DS") 
 
 ```
@@ -136,7 +137,7 @@ survey %>% select(contains("How do you perceive the importance of the following 
 
 To get a better perspective of the volume of the respondents, below is the same plot as above but with absolute numbers of respondents and their options.
 
-```{r}
+```{r warning=FALSE}
 survey %>% select(contains("How do you perceive the importance of the following topics?")) %>% 
   gather() %>% 
   mutate(key = str_replace(key,"-","\n")) %>% 
@@ -176,7 +177,7 @@ survey %>% select(contains("How do you perceive the importance of the following 
 
 
  
-```{r}
+```{r warning=FALSE}
 survey %>% select(contains("How do you perceive the importance of the following topics?")) %>% 
   gather() %>% 
   mutate(key = str_replace(key,"How do you perceive the importance of the following topics?",""),
@@ -205,7 +206,7 @@ not_they <- survey %>% filter(`How do you perceive the importance of the followi
 
 ### Gender 
 
-```{r}
+```{r warning=FALSE}
 
 they %>% group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungroup() %>% 
   rename("Gender" = `What is your gender? - Selected Choice`) %>% 
@@ -261,7 +262,7 @@ cowplot::plot_grid(p1,p2)
 
 ### Age 
 
-```{r}
+```{r warning=FALSE}
 
 they %>% group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %>% 
   rename("Age" = `What is your age (# years)?`) %>% 
@@ -309,7 +310,7 @@ cowplot::plot_grid(p1,p2)
 Age doesn't seem to give anything straightway, which probably could be due to a lot of different age brackets. Let us try a bit of engineering to club them into two groups < 30 and > 30. 
 
 
-```{r}
+```{r warning=FALSE}
 
 they %>% 
   mutate(age_grp = ifelse(parse_number(`What is your age (# years)?`) < 30,
@@ -365,7 +366,7 @@ This plot helps us say that **the younger ones need to be updated with the impli
 ### Student vs Professionals
 
 
-```{r}
+```{r warning=FALSE}
 
 they %>% 
   mutate(title = ifelse(`Select the title most similar to your current role (or most recent title if retired): - Selected Choice` == "Student",
@@ -421,7 +422,7 @@ cowplot::plot_grid(p1,p2)
 ### Undergraduate Majors
 
 
-```{r}
+```{r warning=FALSE}
 
 
 
@@ -560,6 +561,34 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 ```
 
 * **Chile** leads the pack if all the countries are considered otherwise if only the countries with more than 100 respondents are selected, **South Africa** followed by **Nigeria** are leading the pack of a healthy They to Not They ratio.
+
+
+
+
+### Work Industry
+
+```{r warning=FALSE}
+
+they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Industry" = `In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice`,
+         "They" = n) %>%  
+  bind_cols(
+not_they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Industry1" = `In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice`,
+         "Not They" = n) %>% 
+  select(-Industry1)) %>% 
+  #filter((They + `Not They`) > 100) %>% 
+  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  filter(!Industry %in% c("3","Other")) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("line",hcaes("Industry","T_NT_Ratio")) %>% 
+  hc_title(text = "They vs Not They Ratio - Industry-wise") %>% 
+    hc_add_theme(hc_theme_538())
+
+
+```
 
 ## Recommendations 
 
