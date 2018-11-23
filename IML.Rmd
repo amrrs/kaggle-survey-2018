@@ -625,6 +625,8 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 * Those who consider themselves to be **Definitely** a data scientist are more likely also to believe about Model Bias and Fairness with those who do not consider themselves a data scientists making the last end of the spectrum with lowest They vs Not They Ratio!
 
 
+### Type of Data
+
 
 ```{r}
 
