@@ -590,6 +590,39 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 
 ```
 
+* Kagglers in Industries like **Non_Profit/Service** and **Government/Public Service** have been better perception about the importance of Model Fairness and Bias.
+
+* The above plot once again empahsis the importance of Model Bias and Fairness education among students. 
+* It's also unhealthy to see places like **Military** and **Internet-based Services** falling behind as those are the places where the model evaluation is crucial and can have serious outcomes. 
+
+ 
+### Data Scientist?
+
+```{r warning=FALSE}
+
+they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`Do you consider yourself to be a data scientist?`) %>% count() %>% ungroup() %>% 
+  rename("DS" = `Do you consider yourself to be a data scientist?`,
+         "They" = n) %>%  
+  bind_cols(
+not_they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`Do you consider yourself to be a data scientist?`) %>% count() %>% ungroup() %>% 
+  rename("DS1" = `Do you consider yourself to be a data scientist?`,
+         "Not They" = n)# %>% 
+ # select(-DS1)
+) %>% 
+  #filter((They + `Not They`) > 100) %>% 
+  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  filter(!DS %in% c("3","Other")) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("line",hcaes("DS","T_NT_Ratio")) %>% 
+  hc_title(text = "They vs Not They Ratio - Based on if they consider themsevles a Data Scientist") %>% 
+    hc_add_theme(hc_theme_538())
+
+
+```
+
+
 ## Recommendations 
 
 * Exposing College Students and Early in Career Data Scientsits to Model Fairness and Bias Machine Learning 
