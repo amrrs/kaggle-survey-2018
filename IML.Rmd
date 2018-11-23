@@ -622,9 +622,45 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 
 ```
 
+* Those who consider themselves to be **Definitely** a data scientist are more likely also to believe about Model Bias and Fairness with those who do not consider themselves a data scientists making the last end of the spectrum with lowest They vs Not They Ratio!
+
+
+
+```{r}
+
+
+they %>% 
+  dplyr::select(contains("types of data")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:11, key = "questions", value = "DataType") %>% 
+  #tidyr::replace_na() %>% 
+  group_by(DataType) %>% 
+  count() %>% 
+  rename("They" = n) %>% 
+bind_cols(
+  not_they %>% 
+  dplyr::select(contains("types of data")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:11, key = "questions", value = "DataType") %>% 
+  #tidyr::replace_na() %>% 
+  group_by(DataType) %>% 
+  count() %>% 
+  rename("Not They" = n)
+) %>% 
+  dplyr::select(-DataType1) %>% 
+mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("line",hcaes("DataType","T_NT_Ratio")) %>% 
+  hc_title(text = "They vs Not They Ratio - Type of Data") %>% 
+    hc_add_theme(hc_theme_538())
+```
+
+* Kagglers who use **Genetic Data** lead the table of giving importance to Model Bias while Kagglers who use **Image Data** and **Video Data** are least bothered 
+
 
 ## Recommendations 
 
 * Exposing College Students and Early in Career Data Scientsits to Model Fairness and Bias Machine Learning 
 * Educating specially Male (and also female) Data scientsts the importance of unBiasing input training data / Model before moving it to production / presentation
 * Suggesting places like Kaggle and Bootcamps to include Projects/Works about Model Fariness and Bias in their Data Science Curriculum
+* While it's good that people who use Genetic Data are concerned about it, People who use Image Data and Video data could also be part of surveillance teams hence educating them about Model Bias could help a socially unbiased AI solution.
