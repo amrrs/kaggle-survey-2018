@@ -1,5 +1,5 @@
 ---
-title: "Data science beyond Modelling"
+title: "ML Bias, Interpretability - Kaggler Perspective & Recoomendations"
 output:
   html_document:
     number_sections: false
@@ -190,9 +190,12 @@ survey %>% select(contains("How do you perceive the importance of the following 
   knitr::kable()
 ```
 
-## Who are they?
 
-*They* refer to those beings who think Fairness and Bias are **Very Important** in Machine Learning. 
+## Model Bias & Model Fairness 
+
+### Who are they?
+
+*They* refer to those beings who think Fairness and Bias in ML Alggorithm are **Very Important** in Machine Learning. 
 
 
 ```{r}
@@ -653,12 +656,187 @@ bind_cols(
 mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
   arrange(desc(T_NT_Ratio)) %>% 
   hchart("line",hcaes("DataType","T_NT_Ratio")) %>% 
-  hc_title(text = "They vs Not They Ratio - Type of Data") %>% 
+  hc_title(text = "Type of Data - They vs Not They Ratio ") %>% 
     hc_add_theme(hc_theme_538())
 ```
 
-* Kagglers who use **Genetic Data** lead the table of giving importance to Model Bias while Kagglers who use **Image Data** and **Video Data** are least bothered 
+* Kagglers who use **Genetic Data** lead the table of giving importance to Model Bias 
+* Kagglers who use **Image Data** and **Video Data** are least bothered 
 
+### MOOC - Online course Platform
+
+
+```{r}
+
+
+they %>% 
+  dplyr::select(contains("online platforms have you begun or completed data science courses")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:13, key = "questions", value = "DataType") %>% 
+ 
+  #tidyr::replace_na() %>% 
+  group_by(DataType) %>% 
+  count() %>% 
+  rename("They" = n) %>% 
+bind_cols(
+ 
+
+not_they %>% 
+  dplyr::select(contains("online platforms have you begun or completed data science courses")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:13, key = "questions", value = "DataType") %>% 
+ 
+  group_by(DataType) %>% 
+  count() %>% 
+  rename("Not They" = n)
+) %>% 
+  dplyr::select(-DataType1) %>% 
+mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("line",hcaes("DataType","T_NT_Ratio")) %>% 
+  hc_title(text = " MOOC - Online course platform - They vs Not They Ratio") %>% 
+    hc_add_theme(hc_theme_538())
+```
+
+
+* Ironically, **Kaggle Learn** combining with **Coursera** and **Udemy** top the places from where people who don't think Model Bias is **very important** learn Data Science / Machine Learning
+* Kagglers who learn DS from **Google Developers**, **Theschool.ai** and **Fast.ai** are the ones who lead the thought process of thinking that Model Bias is **very important**
+
+# Model Interpretability / Explaining ML Models
+
+
+### Who are they?
+
+*They* refer to those beings who think *Being able to explain ML model outputs and/or predictions* are **Very Important** in Machine Learning and *Not They* are those who think otherwise including - Somewhat Important, Not at all important and similar.
+
+
+```{r}
+
+they <- survey %>% filter(`How do you perceive the importance of the following topics? - Being able to explain ML model outputs and/or predictions` == "Very important")
+
+
+not_they <- survey %>% filter(`How do you perceive the importance of the following topics? - Being able to explain ML model outputs and/or predictions` != "Very important")
+
+```
+
+
+### R vs Python vs more
+
+
+```{r}
+
+they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`What specific programming language do you use most often? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Lang" = `What specific programming language do you use most often? - Selected Choice`,
+         "They" = n) %>%  
+  bind_cols(
+not_they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`What specific programming language do you use most often? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Lang1" = `What specific programming language do you use most often? - Selected Choice`,
+         "Not They" = n) %>% 
+  select(-Lang1)) %>% 
+  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("bar",hcaes("Lang","T_NT_Ratio")) %>% 
+  hc_title(text = "Language - Interpretable Machine Learning  ") %>% 
+  hc_add_theme(hc_theme_538()) 
+  
+
+```
+
+* Unexpectedly, **SAS/STATA** tops the index of They-Not_they ratio followed by **R** and **MATLAB** - making these three language users on Kaggle believe Model Intepretability is very important.
+
+* **Python** users need to be made aware of IML as Python still catches up behind **SQL** and **Julia**.
+
+
+```{r}
+they %>% filter(!`Which best describes your undergraduate major? - Selected Choice` %in% c("Other")) %>% 
+  group_by(`Which best describes your undergraduate major? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Degree" = `Which best describes your undergraduate major? - Selected Choice`,
+         "They" = n) %>%  
+  bind_cols(
+not_they %>% filter(!`Which best describes your undergraduate major? - Selected Choice` %in% c("Other")) %>% 
+  group_by(`Which best describes your undergraduate major? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Degree1" = `Which best describes your undergraduate major? - Selected Choice`,
+         "Not They" = n) %>% 
+  select(-Degree1)) %>% 
+  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("bar",hcaes("Degree","T_NT_Ratio")) %>% 
+  hc_title(text = "Degree (Education) - Interpretable Machine Learning  ") %>% 
+  hc_add_theme(hc_theme_538()) 
+  
+```
+
+* Kagglers with **Humanities** background strongly believe in IML (Interpretable Machine Learning) with a TNT index of 2.28, followed by Engineerg (Non-CS) and **Mathematics/Statistitcs**
+* Ironically, **Computer Science** Engineers are no where near the top with the index of 1.1764
+
+
+
+
+### Work Industry
+
+```{r warning=FALSE}
+
+they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Industry" = `In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice`,
+         "They" = n) %>%  
+  bind_cols(
+not_they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Industry1" = `In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice`,
+         "Not They" = n) %>% 
+  select(-Industry1)) %>% 
+  #filter((They + `Not They`) > 100) %>% 
+  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  filter(!Industry %in% c("3","Other")) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("line",hcaes("Industry","T_NT_Ratio")) %>% 
+  hc_title(text = "IML - They vs Not They Ratio - Industry-wise") %>% 
+    hc_add_theme(hc_theme_538())
+
+
+```
+
+### MOOC - Online course Platform
+
+
+```{r}
+
+
+they %>% 
+  dplyr::select(contains("online platforms have you begun or completed data science courses")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:13, key = "questions", value = "DataType") %>% 
+ 
+  #tidyr::replace_na() %>% 
+  group_by(DataType) %>% 
+  count() %>% 
+  rename("They" = n) %>% 
+bind_cols(
+ 
+
+not_they %>% 
+  dplyr::select(contains("online platforms have you begun or completed data science courses")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:13, key = "questions", value = "DataType") %>% 
+ 
+  group_by(DataType) %>% 
+  count() %>% 
+  rename("Not They" = n)
+) %>% 
+  dplyr::select(-DataType1) %>% 
+mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("line",hcaes("DataType","T_NT_Ratio")) %>% 
+  hc_title(text = " IML - MOOC - Online course platform - They vs Not They Ratio") %>% 
+    hc_add_theme(hc_theme_538())
+```
+
+* **Kaggle Learn** that has an exclusive course on **Interpretable Machine Learning** hasn't managed to be on the top, only with the 5 position
+* **Datacamp** Kagglers have a strong feeling of **Very important** about **IML**
+* Unlike, **Model Bias** perception where **Fast.ai** was on the top, here it's at the rock-bottom
 
 ## Recommendations 
 
@@ -666,3 +844,5 @@ mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>%
 * Educating specially Male (and also female) Data scientsts the importance of unBiasing input training data / Model before moving it to production / presentation
 * Suggesting places like Kaggle and Bootcamps to include Projects/Works about Model Fariness and Bias in their Data Science Curriculum
 * While it's good that people who use Genetic Data are concerned about it, People who use Image Data and Video data could also be part of surveillance teams hence educating them about Model Bias could help a socially unbiased AI solution.
+* **Kaggle Learn**, **Coursera** and **Udemy** need to improve their Course curriculum to include lessons about Model Bias and Fairness.
+* Fast.AI, TheSchool.Ai need to have courses focused on Interpretable Machine Learning.
