@@ -693,14 +693,35 @@ not_they %>%
   dplyr::select(-DataType1) %>% 
 mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
   arrange(desc(T_NT_Ratio)) %>% 
-  hchart("line",hcaes("DataType","T_NT_Ratio")) %>% 
-  hc_title(text = " MOOC - Online course platform - They vs Not They Ratio") %>% 
-    hc_add_theme(hc_theme_538())
+  hchart("column",hcaes("DataType","T_NT_Ratio", color = "T_NT_Ratio")) %>% 
+   hc_title(text = " MOOC - Online course platform - They vs Not They Ratio") %>% 
+   hc_add_theme(hc_theme_538())
 ```
 
 
 * Ironically, **Kaggle Learn** combining with **Coursera** and **Udemy** top the places from where people who don't think Model Bias is **very important** learn Data Science / Machine Learning
 * Kagglers who learn DS from **Google Developers**, **Theschool.ai** and **Fast.ai** are the ones who lead the thought process of thinking that Model Bias is **very important**
+
+
+### Percentage of Data Projects
+
+
+```{r}
+
+survey %>% 
+  select(`Approximately what percent of your data projects involved exploring unfair bias in the dataset and/or algorithm?`) %>% 
+  drop_na() %>% 
+  group_by(`Approximately what percent of your data projects involved exploring unfair bias in the dataset and/or algorithm?`) %>% 
+  rename("Percentage" = `Approximately what percent of your data projects involved exploring unfair bias in the dataset and/or algorithm?`) %>% 
+  count() %>% 
+  hchart("area",hcaes("Percentage","n")) %>% 
+  hc_title(text = "What percent of your data projects involved exploring unfair bias ") %>% 
+  hc_add_theme(hc_theme_538()) 
+  
+
+```
+
+
 
 # Model Interpretability / Explaining ML Models
 
@@ -718,6 +739,35 @@ they <- survey %>% filter(`How do you perceive the importance of the following t
 not_they <- survey %>% filter(`How do you perceive the importance of the following topics? - Being able to explain ML model outputs and/or predictions` != "Very important")
 
 ```
+
+
+### Age
+
+
+```{r}
+
+
+they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %>% 
+  rename("Age" = `What is your age (# years)?`,
+         "They" = n) %>%  
+  bind_cols(
+not_they %>% #filter(`In which country do you currently reside?` %in% c("India","United States of America")) %>% 
+  group_by(`What is your age (# years)?`) %>% count() %>% ungroup() %>% 
+  rename("Age1" = `What is your age (# years)?`,
+         "Not They" = n) %>% 
+  select(-Age1)) %>% 
+  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("area",hcaes("Age","T_NT_Ratio")) %>% 
+  hc_title(text = "Age Range - Interpretable Machine Learning  ") %>% 
+  hc_add_theme(hc_theme_538()) 
+  
+
+
+```
+
+* The cohort between Age group **18 - 29** are almost half of the index value of the cohort in **60-69** which shows how age and experience play a vital role in their perception about Interpretable Machine Learning 
 
 
 ### R vs Python vs more
@@ -762,7 +812,7 @@ not_they %>% filter(!`Which best describes your undergraduate major? - Selected 
   select(-Degree1)) %>% 
   mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
   arrange(desc(T_NT_Ratio)) %>% 
-  hchart("bar",hcaes("Degree","T_NT_Ratio")) %>% 
+  hchart("column",hcaes("Degree","T_NT_Ratio")) %>% 
   hc_title(text = "Degree (Education) - Interpretable Machine Learning  ") %>% 
   hc_add_theme(hc_theme_538()) 
   
@@ -799,6 +849,11 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 
 ```
 
+* Kagglers from **Insurance** and **Military/Defense** industry background lead the table 
+* As we've seen before, **Students** are no where close to perceive **Interpretable Machine Learning** is Very important
+* Industries like **Marketing**, **Online Services** are worse than Students in their perception
+
+
 ### MOOC - Online course Platform
 
 
@@ -829,7 +884,7 @@ not_they %>%
   dplyr::select(-DataType1) %>% 
 mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
   arrange(desc(T_NT_Ratio)) %>% 
-  hchart("line",hcaes("DataType","T_NT_Ratio")) %>% 
+  hchart("area",hcaes("DataType","T_NT_Ratio")) %>% 
   hc_title(text = " IML - MOOC - Online course platform - They vs Not They Ratio") %>% 
     hc_add_theme(hc_theme_538())
 ```
@@ -837,6 +892,45 @@ mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>%
 * **Kaggle Learn** that has an exclusive course on **Interpretable Machine Learning** hasn't managed to be on the top, only with the 5 position
 * **Datacamp** Kagglers have a strong feeling of **Very important** about **IML**
 * Unlike, **Model Bias** perception where **Fast.ai** was on the top, here it's at the rock-bottom
+
+
+
+### Exploring model insights? - Percentage of Data Projects
+
+
+```{r}
+
+survey %>% 
+  select(`Approximately what percent of your data projects involve exploring model insights?`) %>% 
+  drop_na() %>% 
+  group_by(`Approximately what percent of your data projects involve exploring model insights?`) %>% 
+  rename("Percentage" = `Approximately what percent of your data projects involve exploring model insights?`) %>% 
+  count() %>% 
+  hchart("area",hcaes("Percentage","n")) %>% 
+  hc_title(text = "What percent of your data projects involve exploring model insights?") %>% 
+  hc_add_theme(hc_theme_538()) 
+  
+
+```
+
+
+### ML models to be black boxes - Difficult to explain
+
+
+```{r}
+
+survey %>% 
+  select(`Do you consider ML models to be \"black boxes\" with outputs that are difficult or impossible to explain?`) %>% 
+  drop_na() %>% 
+  group_by(`Do you consider ML models to be \"black boxes\" with outputs that are difficult or impossible to explain?`) %>% 
+  rename("Perspective" = `Do you consider ML models to be \"black boxes\" with outputs that are difficult or impossible to explain?`) %>% 
+  count() %>% 
+  hchart("bar",hcaes("Perspective","n")) %>% 
+  hc_title(text = 'ML models to be \"black boxes\" with outputs that are difficult or impossible to explain?') %>% 
+  hc_add_theme(hc_theme_538()) 
+  
+
+```
 
 ## Recommendations 
 
