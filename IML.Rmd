@@ -1084,6 +1084,55 @@ survey %>%
 * Plotting **Predicted vs Actual Results** remain the standalone topper in the list of preferred methods in Interpretable Machine Learning which is kind of an irony because of the fact that it's an evaluation metric for Model succses rather than Interpreting Machine Learning Model
 * IML technqiues like LIME, SHAP, ELI5 are way beyond in the list preferences, thus making a point of how much awareness the community has to be edicated to in terms of Interpretable Machine Learning Techniques
 
+## Reproducibility 
+
+### Tools and Methods for ML Reproduction
+
+```{r}
+
+survey %>% 
+  dplyr::select(contains("tools and methods do you use to make your work easy to reproduce")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:11, key = "questions", value = "methods") %>% 
+  #tidyr::replace_na() %>% 
+  group_by(methods) %>% 
+  count()  %>% 
+
+  drop_na() %>% 
+
+  hchart("bar",hcaes("methods","n")) %>% 
+  hc_title(text = "Tools and methods do you use to make your work easy to reproduce") %>% 
+    hc_add_theme(hc_theme_darkunica())
+```
+
+
+* **Documentation** and **Human-readable** codes lead the list of preferred tools and methods to make ML reproducible
+* Sophisticated ways like **Docker** or **Virtual Box** are lot less preferred even ~ 50% lesser than those above easy options
+* Sharing Code on **Github** and also code along with **Data** is another moderately preferred method, that's less expensive too
+* Sharing code on Hosted Environment like **Kaggle Kernels** are in better position than Sophisticated techniques like **Docker** yet fall a lot behind than easy uploading on **Github**
+
+
+### Barriers preventing from making easier to reuse and reproducible work
+
+```{r}
+
+survey %>% 
+  dplyr::select(contains(" barriers prevent you from making your work even easier to reuse and reproduce")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:8, key = "questions", value = "barriers") %>% 
+  #tidyr::replace_na() %>% 
+  group_by(barriers) %>% 
+  count()  %>% 
+
+  drop_na() %>% 
+
+  hchart("bar",hcaes("barriers","n")) %>% 
+  hc_title(text = "Barriers preventing from making easier to reuse and reproducible work") %>% 
+    hc_add_theme(hc_theme_darkunica())
+```
+
+* Producing **Reproducible Machine Learning** works is considered to be **Too Time-consuming** which is the most prominent reason why Kagglers don't prefer doing so.
+* Another important standing out point followed by the above one is, **Not having enough incentive of doing so** - reproducible Machine Learning.
 
 # Recommendations from these Insights 
 
@@ -1095,6 +1144,10 @@ survey %>%
 * While it's good that people who use Genetic Data are concerned about it, People who use **Image Data and Video data** could also be part of surveillance teams hence educating them about Model Bias could help a socially unbiased AI s  olution.
 * **Kaggle Learn**, **Coursera** and **Udemy** need to improve their Course curriculum to include lessons about Model Bias and Fairness.
 * Fast.AI, TheSchool.Ai need to have courses focused on Interpretable Machine Learning.
+* To improve **Reprodcibility** in Machine Learning, it is essential to introduce tools that are as easy as uploading code on github but also that can have a completely reproducible project
+* Coding Curriculum encouraging and training new comers using tools like **Rmarkdown** can help in better documentation
+* Training on **Docker** and **Virtual Box** and encouraing to use **Kaggle Kernels/Collabs** should drive more reproducible work
+* Ultimately, the **Incentive** of delivering a reproducible work should be applauded over **non-reproducible works**. In other words, **non-reproducilble work** must require extra scrutiny or lower-tier while **reproducible work** should have autoapproval work and verified tags as a sign of better incentive.
 
 # Media Coverage about Bias / IML
 
