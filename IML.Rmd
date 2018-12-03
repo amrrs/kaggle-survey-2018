@@ -54,6 +54,12 @@ suppressPackageStartupMessages(library(DataExplorer))
 suppressPackageStartupMessages(library(scales))
 suppressPackageStartupMessages(library(cowplot))
 suppressPackageStartupMessages(library(viridis))
+suppressPackageStartupMessages(library(wordcloud))
+suppressPackageStartupMessages(library(tidytext))
+suppressPackageStartupMessages(library(RColorBrewer))
+
+pal <- brewer.pal(9,"BuGn")
+
 
 plotting_missing <- function(df){
 
@@ -590,6 +596,47 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 * **Chile** leads the pack if all the countries are considered otherwise if only the countries with more than 100 respondents are selected, **South Africa** followed by **Nigeria** are leading the pack of a healthy They to Not They ratio.
 
 
+### Media Sources
+
+
+```{r}
+
+
+they %>% 
+  dplyr::select(contains("your favorite media sources that report on data science topics")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:22, key = "questions", value = "media") %>% 
+ 
+  #tidyr::replace_na() %>% 
+  group_by(media) %>% 
+  count() %>% 
+  rename("They" = n) %>% 
+bind_cols(
+ 
+
+not_they %>% 
+  dplyr::select(contains("your favorite media sources that report on data science topics")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:22, key = "questions", value = "media") %>% 
+ 
+  group_by(media) %>% 
+  count() %>% 
+  rename("Not They" = n)
+) %>% 
+  dplyr::select(-media1) %>% 
+mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  drop_na() %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("line",hcaes("media","T_NT_Ratio")) %>% 
+  hc_title(text = " Model Bias and Fairness - Media Sources - They vs Not They Ratio") %>% 
+    hc_add_theme(hc_theme_538())
+```
+
+* The above plot makes it very clear that **Podcasts** like **Partiall Derivative**, **Data Skpetic** and **Linear Digression** are places where Kagglers who strongly believe that ML Bias and Fairness get their news from.
+
+* **Nate Silver's 538** makes an entry in the top 5 media sources arranged by `T_NT_Ratio` KPI
+
+* **Kaggle Forums** seemed to need to make more work in terms of encouraging or initiating discussions about **ML Bias and Fairness**
 
 
 ### Work Industry
@@ -895,7 +942,7 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 
 * **Python** users need to be made aware of IML as Python still catches up behind **SQL** and **Julia**.
 
-
+### Degree - Education
 
 
 ```{r}
@@ -912,7 +959,7 @@ not_they %>% filter(!`Which best describes your undergraduate major? - Selected 
   mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
   arrange(desc(T_NT_Ratio)) %>% 
   hchart("column",hcaes("Degree","T_NT_Ratio")) %>% 
-  hc_title(text = "Degree (Education) - Interpretable Machine Learning  ") %>% 
+  hc_title(text = "Degree (Education) -  Interpretable Machine Learning ") %>% 
   hc_add_theme(hc_theme_538()) 
   
 ```
@@ -993,6 +1040,44 @@ mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>%
 * Unlike, **Model Bias** perception where **Fast.ai** was on the top, here it's at the rock-bottom
 
 
+### Media Sources
+
+
+```{r}
+
+
+they %>% 
+  dplyr::select(contains("your favorite media sources that report on data science topics")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:22, key = "questions", value = "media") %>% 
+ 
+  #tidyr::replace_na() %>% 
+  group_by(media) %>% 
+  count() %>% 
+  rename("They" = n) %>% 
+bind_cols(
+ 
+
+not_they %>% 
+  dplyr::select(contains("your favorite media sources that report on data science topics")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:22, key = "questions", value = "media") %>% 
+ 
+  group_by(media) %>% 
+  count() %>% 
+  rename("Not They" = n)
+) %>% 
+  dplyr::select(-media1) %>% 
+mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  drop_na() %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("line",hcaes("media","T_NT_Ratio")) %>% 
+  hc_title(text = " IML - Media Sources - They vs Not They Ratio") %>% 
+    hc_add_theme(hc_theme_538())
+```
+
+* **Kdnuggets**, **O'reily data newsletter** and **Kaggle Forum** top the list based on the index `T_NT_Ratio` making them one of the top media sources `They` get news from the most
+
 
 ### Exploring model insights? - Percentage of Data Projects
 
@@ -1055,6 +1140,8 @@ survey %>%
   hc_title(text = "Circumstances where exploring model insights and interpreting model happens") %>% 
     hc_add_theme(hc_theme_darkunica())
 ```
+
+
 * The above plot indicates that this attempt to explore model insights and interpret model happens when **The model has been built specificially for that**
 
 * That's followed by **When first exploring a new ML model or Dataset** which tells us an important point that **Model Intepretability** should be part of AMC or Model Refresh cycle rather than being the first-time duty. 
@@ -1081,8 +1168,25 @@ survey %>%
     hc_add_theme(hc_theme_darkunica())
 ```
 
+```{r warning=FALSE, message=FALSE}
+
+survey %>% 
+  select(`What methods do you prefer for explaining and/or interpreting decisions that are made by ML models? (Select all that apply) - Other - Text`) %>% 
+  drop_na() %>%
+  rename("text" = `What methods do you prefer for explaining and/or interpreting decisions that are made by ML models? (Select all that apply) - Other - Text`) %>% 
+  unnest_tokens(word, text)  %>% 
+  anti_join(stop_words) %>%
+  count(word) %>% 
+  arrange(desc(n)) %>% 
+  with(wordcloud(word, n, max.words = 100, colors = pal))
+```
+
+
+
 * Plotting **Predicted vs Actual Results** remain the standalone topper in the list of preferred methods in Interpretable Machine Learning which is kind of an irony because of the fact that it's an evaluation metric for Model succses rather than Interpreting Machine Learning Model
 * IML technqiues like LIME, SHAP, ELI5 are way beyond in the list preferences, thus making a point of how much awareness the community has to be edicated to in terms of Interpretable Machine Learning Techniques
+
+
 
 ## Reproducibility 
 
@@ -1130,6 +1234,7 @@ survey %>%
   hc_title(text = "Barriers preventing from making easier to reuse and reproducible work") %>% 
     hc_add_theme(hc_theme_darkunica())
 ```
+
 
 * Producing **Reproducible Machine Learning** works is considered to be **Too Time-consuming** which is the most prominent reason why Kagglers don't prefer doing so.
 * Another important standing out point followed by the above one is, **Not having enough incentive of doing so** - reproducible Machine Learning.
