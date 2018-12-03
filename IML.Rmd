@@ -257,10 +257,34 @@ cowplot::plot_grid(p1,p2)
 ```
 
 
+Let us a create a new KPI index called `They - Not They Ratio` to give a different perspective to this comparison.
+
+
+```{r}
+they %>% filter(!`What is your gender? - Selected Choice` %in% c("Other")) %>% 
+  group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Degree" = `What is your gender? - Selected Choice`,
+         "They" = n) %>%  
+  bind_cols(
+not_they %>% filter(!`What is your gender? - Selected Choice` %in% c("Other")) %>% 
+  group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Degree1" = `What is your gender? - Selected Choice`,
+         "Not They" = n) %>% 
+  select(-Degree1)) %>% 
+  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("column",hcaes("Degree","T_NT_Ratio")) %>% 
+  hc_title(text = "Gender-wise preference - Model Bias and Fairness  ") %>% 
+  hc_add_theme(hc_theme_538()) 
+  
+```
+
+
 * There is a difference of **5.1 PP** Female Percentage difference between those who perceive **Model Fariness & Bias in ML** is **Very Important** and Others.
 
 * While this could be seen as that **Female Gender** usually gets affected by these Biases, It's also important to realize that **Male Gender** (Kaggler's) don't echo similar sentiment as their female counterpart. After all, A healthy model is what we all want, don't we?
 
+* Using the index that we created `T_NT_Ratio`, we can see that `Female` gender and those who selected other options other than `Male` are above on top of `Male` Kagglers in their perception about **Model Bias and Fairness**
 
 
 ### Age 
@@ -722,6 +746,9 @@ survey %>%
 ```
 
 
+* As you can see above, There is a very very minimal demand in the workplace to explore unfair ML bias. 
+* In fact, only ~ 1.2K respondents of the total ~13K respondents who respondended to this question, have answered to have a need of more than 50% to explore unfair bias in their data projects. (that's less than 10%)
+
 
 # Model Interpretability / Explaining ML Models
 
@@ -738,6 +765,29 @@ they <- survey %>% filter(`How do you perceive the importance of the following t
 
 not_they <- survey %>% filter(`How do you perceive the importance of the following topics? - Being able to explain ML model outputs and/or predictions` != "Very important")
 
+```
+
+
+### Gender
+
+
+```{r}
+they %>% filter(!`What is your gender? - Selected Choice` %in% c("Other")) %>% 
+  group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Degree" = `What is your gender? - Selected Choice`,
+         "They" = n) %>%  
+  bind_cols(
+not_they %>% filter(!`What is your gender? - Selected Choice` %in% c("Other")) %>% 
+  group_by(`What is your gender? - Selected Choice`) %>% count() %>% ungroup() %>% 
+  rename("Degree1" = `What is your gender? - Selected Choice`,
+         "Not They" = n) %>% 
+  select(-Degree1)) %>% 
+  mutate("T_NT_Ratio" = round(They/`Not They`,3)) %>% 
+  arrange(desc(T_NT_Ratio)) %>% 
+  hchart("column",hcaes("Degree","T_NT_Ratio")) %>% 
+  hc_title(text = "Gender-wise preference - Interpretable Machine Learning  ") %>% 
+  hc_add_theme(hc_theme_538()) 
+  
 ```
 
 
@@ -797,6 +847,8 @@ not_they %>% #filter(`In which country do you currently reside?` %in% c("India",
 * Unexpectedly, **SAS/STATA** tops the index of They-Not_they ratio followed by **R** and **MATLAB** - making these three language users on Kaggle believe Model Intepretability is very important.
 
 * **Python** users need to be made aware of IML as Python still catches up behind **SQL** and **Julia**.
+
+
 
 
 ```{r}
@@ -932,11 +984,25 @@ survey %>%
 
 ```
 
-## Recommendations 
+The above plot tells us that Most people are confident that they can understand and explain the outputs of Many ML models but not all ML models. In fact, those who feel - Most ML models are *Black Boxes* are more than those who don't have any opininon on this matter.
 
-* Exposing College Students and Early in Career Data Scientsits to Model Fairness and Bias Machine Learning 
-* Educating specially Male (and also female) Data scientsts the importance of unBiasing input training data / Model before moving it to production / presentation
-* Suggesting places like Kaggle and Bootcamps to include Projects/Works about Model Fariness and Bias in their Data Science Curriculum
-* While it's good that people who use Genetic Data are concerned about it, People who use Image Data and Video data could also be part of surveillance teams hence educating them about Model Bias could help a socially unbiased AI solution.
+
+
+# Recommendations from these Insights 
+
+* Exposing **College Students** and Early in Career Data Scientsits to Model Fairness and Bias Machine Learning 
+* Educating specially **Male** (and also female) Data scientsts the importance of unBiasing input training data / Model before moving it to production / presentation
+* Suggesting places like **Kaggle and Bootcamps** to include Projects/Works about Model Fariness and Bias in their Data Science Curriculum
+* While it's good that people who use Genetic Data are concerned about it, People who use **Image Data and Video data** could also be part of surveillance teams hence educating them about Model Bias could help a socially unbiased AI solution.
 * **Kaggle Learn**, **Coursera** and **Udemy** need to improve their Course curriculum to include lessons about Model Bias and Fairness.
 * Fast.AI, TheSchool.Ai need to have courses focused on Interpretable Machine Learning.
+
+# Media Coverage about Bias
+
+* [Amazon scraps secret AI recruiting tool that showed bias against women](https://www.reuters.com/article/us-amazon-com-jobs-automation-insight/amazon-scraps-secret-ai-recruiting-tool-that-showed-bias-against-women-idUSKCN1MK08G)
+
+# Undoing Bias - Papers and Attempts
+
+* [Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings](https://arxiv.org/abs/1607.06520)
+* [Machine Learning and Human Bias - How Google does Machine Learning](https://www.coursera.org/lecture/google-machine-learning/machine-learning-and-human-bias-ZxQaP)
+* [Google What If Tool - ML Probing Tool](https://pair-code.github.io/what-if-tool/)
