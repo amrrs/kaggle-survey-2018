@@ -1,5 +1,5 @@
 ---
-title: "ML Bias, Interpretability - Kaggler Perspective & Recoomendations"
+title: "ML Bias, Interpretability - Kaggler Perspective & Recommendations"
 output:
   html_document:
     number_sections: false
@@ -749,6 +749,53 @@ survey %>%
 * As you can see above, There is a very very minimal demand in the workplace to explore unfair ML bias. 
 * In fact, only ~ 1.2K respondents of the total ~13K respondents who respondended to this question, have answered to have a need of more than 50% to explore unfair bias in their data projects. (that's less than 10%)
 
+### Metrics for Model Success
+
+
+```{r}
+
+survey %>% 
+  dplyr::select(contains("not your models were successful")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:5, key = "questions", value = "Metric") %>% 
+  #tidyr::replace_na() %>% 
+  group_by(Metric) %>% 
+  count()  %>% 
+
+  drop_na() %>% 
+
+  hchart("column",hcaes("Metric","n")) %>% 
+  hc_title(text = " Metrics used in organizations to determine whether or not your models were successful") %>% 
+    hc_add_theme(hc_theme_darkunica())
+```
+
+* While it's obvious still a fact that Most people would say that usual `Model Accuracy` metrics are considered to determine whether a model is successful or not
+* `Revenue / Business Goals` has almost 2X more votes than `Metri s that consider unfair Bias`
+
+
+### Difficulty in implementing a Fair / Bias-free ML Model 
+
+
+```{r}
+
+survey %>% 
+  dplyr::select(contains("difficult about ensuring that your algorithms are fair and unbiased")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:6, key = "questions", value = "Difficulty") %>% 
+  #tidyr::replace_na() %>% 
+  group_by(Difficulty) %>% 
+  count()  %>% 
+
+  drop_na() %>% 
+
+  hchart("bar",hcaes("Difficulty","n")) %>% 
+  hc_title(text = "Most difficult about ensuring that your algorithms are fair and unbiased?") %>% 
+    hc_add_theme(hc_theme_darkunica())
+```
+
+* Collecting relevant **Data without Bias** is one of the most prominent difficulty in building a Bias free and Fair Model
+* That is followed by, Picking the right **Evaluation Metric for the model's ML Bias** and **Identifying the group that's been unfairly targetted** in the data so that can be used to unbias / nullify the effect
+
 
 # Model Interpretability / Explaining ML Models
 
@@ -988,21 +1035,75 @@ The above plot tells us that Most people are confident that they can understand 
 
 
 
+
+### Circumstances where exploring model insights and interpreting model happens
+
+
+```{r}
+
+survey %>% 
+  dplyr::select(contains("circumstances would you explore model insights and interpret")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:6, key = "questions", value = "circumstances") %>% 
+  #tidyr::replace_na() %>% 
+  group_by(circumstances) %>% 
+  count()  %>% 
+
+  drop_na() %>% 
+
+  hchart("bar",hcaes("circumstances","n")) %>% 
+  hc_title(text = "Circumstances where exploring model insights and interpreting model happens") %>% 
+    hc_add_theme(hc_theme_darkunica())
+```
+* The above plot indicates that this attempt to explore model insights and interpret model happens when **The model has been built specificially for that**
+
+* That's followed by **When first exploring a new ML model or Dataset** which tells us an important point that **Model Intepretability** should be part of AMC or Model Refresh cycle rather than being the first-time duty. 
+
+
+
+### Preferred Methods for Model Interpretability
+
+
+```{r}
+
+survey %>% 
+  dplyr::select(contains("interpreting decisions that are made by ML models")) %>% 
+  dplyr::select(-contains("Text")) %>% 
+  gather(1:15, key = "questions", value = "methods") %>% 
+  #tidyr::replace_na() %>% 
+  group_by(methods) %>% 
+  count()  %>% 
+
+  drop_na() %>% 
+
+  hchart("bar",hcaes("methods","n")) %>% 
+  hc_title(text = " Preferred explaining and/or interpreting decisions that are made by ML models") %>% 
+    hc_add_theme(hc_theme_darkunica())
+```
+
+* Plotting **Predicted vs Actual Results** remain the standalone topper in the list of preferred methods in Interpretable Machine Learning which is kind of an irony because of the fact that it's an evaluation metric for Model succses rather than Interpreting Machine Learning Model
+* IML technqiues like LIME, SHAP, ELI5 are way beyond in the list preferences, thus making a point of how much awareness the community has to be edicated to in terms of Interpretable Machine Learning Techniques
+
+
 # Recommendations from these Insights 
 
 * Exposing **College Students** and Early in Career Data Scientsits to Model Fairness and Bias Machine Learning 
 * Educating specially **Male** (and also female) Data scientsts the importance of unBiasing input training data / Model before moving it to production / presentation
 * Suggesting places like **Kaggle and Bootcamps** to include Projects/Works about Model Fariness and Bias in their Data Science Curriculum
-* While it's good that people who use Genetic Data are concerned about it, People who use **Image Data and Video data** could also be part of surveillance teams hence educating them about Model Bias could help a socially unbiased AI solution.
+* Metrics to consider a model successful or not should include `ML unfair Bias evaluation metrics` too.
+* Improving the avaialbilty of **Bias-free / Fair Dataset** for Machine Learning. Places like **Kaggle Dataset, UCI machine learning** should be advised to include **Fairness** as a label or option.
+* While it's good that people who use Genetic Data are concerned about it, People who use **Image Data and Video data** could also be part of surveillance teams hence educating them about Model Bias could help a socially unbiased AI s  olution.
 * **Kaggle Learn**, **Coursera** and **Udemy** need to improve their Course curriculum to include lessons about Model Bias and Fairness.
 * Fast.AI, TheSchool.Ai need to have courses focused on Interpretable Machine Learning.
 
-# Media Coverage about Bias
+# Media Coverage about Bias / IML
 
 * [Amazon scraps secret AI recruiting tool that showed bias against women](https://www.reuters.com/article/us-amazon-com-jobs-automation-insight/amazon-scraps-secret-ai-recruiting-tool-that-showed-bias-against-women-idUSKCN1MK08G)
 
-# Undoing Bias - Papers and Attempts
+# Undoing Bias / Improving IML - Papers and Attempts
 
 * [Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings](https://arxiv.org/abs/1607.06520)
 * [Machine Learning and Human Bias - How Google does Machine Learning](https://www.coursera.org/lecture/google-machine-learning/machine-learning-and-human-bias-ZxQaP)
 * [Google What If Tool - ML Probing Tool](https://pair-code.github.io/what-if-tool/)
+* [Fairness in Machine Learning - NIPS 2017 Tutorial](https://mrtz.org/nips17/#/)
+* [awesome-machine-learning-interpretability](https://github.com/jphall663/awesome-machine-learning-interpretability)
